@@ -1,23 +1,20 @@
 ---
-import type { GetStaticPaths } from "astro";
-import { getEntry, render } from "astro:content";
+import { getCollection, getEntry, render } from "astro:content";
 import PostLayout from "@layouts/PostLayout.astro";
 
 const { slug } = Astro.params;
 const post = await getEntry("posts", slug);
 const { Content } = await render(post);
 
-export const getStaticPaths = (() => {
-  const posts = Object.values(
-    import.meta.glob("@content/posts/*.md", { eager: true })
-  );
+export async function getStaticPaths() {
+  const posts = await getCollection("posts");
   return posts.map((post) => ({
-    params: { slug: post.file.split("/").pop().split(".")[0] },
+    params: { slug: post.slug },
   }));
-}) satisfies GetStaticPaths;
+}
 ---
 
 <PostLayout>
-  <h1>{post.title}</h1>
+  <h1>{post.data.title}</h1>
   <Content />
 </PostLayout>

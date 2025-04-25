@@ -1,21 +1,18 @@
 ---
+import { getCollection } from "astro:content";
 import Layout from "@layouts/Layout.astro";
 
-const posts = Object.values(
-  import.meta.glob("@content/posts/*.md", { eager: true })
-);
+const posts = await getCollection("posts");
 ---
 
 <Layout>
   <h1>posts index page</h1>
 
   <ul>
-    {
-      posts.map((post) => (
-        <a href={post.url}>
-          <li>{post.frontmatter.title}</li>
-        </a>
-      ))
-    }
+    {posts.map((post) => (
+      <a href={`posts/${post.slug}`}>
+        <li>{post.data.title}</li>
+      </a>
+    ))}
   </ul>
 </Layout>
